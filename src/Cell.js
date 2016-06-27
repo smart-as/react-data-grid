@@ -2,7 +2,7 @@ const React             = require('react');
 const ReactDOM = require('react-dom');
 const joinClasses       = require('classnames');
 const EditorContainer   = require('./addons/editors/EditorContainer');
-const ExcelColumn       = require('./addons/grids/ExcelColumn');
+const ExcelColumn       = require('./PropTypeShapes/ExcelColumn');
 const isFunction        = require('./addons/utils/isFunction');
 const CellMetaDataShape = require('./PropTypeShapes/CellMetaDataShape');
 const SimpleCellFormatter = require('./addons/formatters/SimpleCellFormatter');
@@ -130,7 +130,7 @@ const Cell = React.createClass({
       return <EditorContainer rowData={this.getRowData()} rowIdx={this.props.rowIdx} idx={this.props.idx} cellMetaData={this.props.cellMetaData} column={col} height={this.props.height}/>;
     }
 
-    return this.props.column.formatter || this.props.column.render;
+    return this.props.column.formatter;
   },
 
   getRowData() {
@@ -387,15 +387,14 @@ const Cell = React.createClass({
 
   renderCellContent(props: any): ReactElement {
     let CellContent;
-    let {value,rowData,rowIdx} = this.props;
     let Formatter = this.getFormatter();
     if (React.isValidElement(Formatter)) {
       props.dependentValues = this.getFormatterDependencies();
       CellContent = React.cloneElement(Formatter, props);
     } else if (isFunction(Formatter)) {
-      CellContent = Formatter.call(this,value, rowData, rowIdx);
+      CellContent = <Formatter value={this.props.value} dependentValues={this.getFormatterDependencies()}/>;
     } else {
-      CellContent = <SimpleCellFormatter value={value}/>;
+      CellContent = <SimpleCellFormatter value={this.props.value}/>;
     }
     return (<div ref="cell"
       className="react-grid-Cell__value">{CellContent} {this.props.cellControls}</div>);

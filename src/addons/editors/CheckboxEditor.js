@@ -1,5 +1,5 @@
 const React = require('react');
-
+const {Checkbox} = require('antd');
 const CheckboxEditor = React.createClass({
 
   propTypes: {
@@ -13,8 +13,6 @@ const CheckboxEditor = React.createClass({
   },
 
   handleChange(e: Event) {
-	e.stopPropagation();
-	e.preventDefault();
     this.props.column.onCellChange(this.props.rowIdx, this.props.column.key, this.props.dependentValues, e);
   },
 
@@ -23,7 +21,7 @@ const CheckboxEditor = React.createClass({
     let checkboxName = 'checkbox' + this.props.rowIdx;
     return (
       <div className="react-grid-checkbox-container" onClick={this.handleChange}>
-          <input className="react-grid-checkbox" type="checkbox" name={checkboxName} checked={checked} />
+          <Checkbox className="react-grid-checkbox" name={checkboxName} checked={checked} />
           <label htmlFor={checkboxName} className="react-grid-checkbox-label"></label>
       </div>);
   }
