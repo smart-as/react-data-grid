@@ -197,7 +197,7 @@ const Canvas = React.createClass({
     }
     let RowsRenderer = this.props.rowRenderer;
     if (typeof RowsRenderer === 'function') {
-      return <RowsRenderer {...props}/>;
+      return <RowsRenderer {...props} />;
     }
 
     if (React.isValidElement(this.props.rowRenderer)) {
@@ -215,7 +215,7 @@ const Canvas = React.createClass({
       placeholder: {backgroundColor: 'rgba(211, 211, 211, 0.45)', width: '60%', height: Math.floor(props.height * 0.3)}
     };
     return (
-      <div key={props.key} style={styles.row} className="react-grid-Row">
+      <div key={props.rowKey} style={styles.row} className="react-grid-Row">
         {this.props.columns.map(
           (col, idx) =>
               <div style={Object.assign(styles.cell, {width: col.width, left: col.left})} key={idx} className="react-grid-Cell">
@@ -237,16 +237,57 @@ const Canvas = React.createClass({
       </div>
     );
   },
+  
+  onScrollMcs(dom) {
+    if (ReactDOM.findDOMNode(this) !== dom) {
+      return;
+    }
+    const mcs = dom.mcs;
+    this.appendScrollShim();
+    let scroll = {scrollLeft:-mcs.left, scrollTop: -mcs.top};
+    // check how far we have scrolled, and if this means we are being taken out of range
+    let scrollYRange = Math.abs(this._scroll.scrollTop - scroll.scrollTop) / this.props.rowHeight;
+    let scrolledOutOfRange = scrollYRange > (this.props.displayEnd - this.props.displayStart);
 
+    this._scroll = scroll;
+    this.props.onScroll(scroll);
+    // if we go out of range, we queue the actual render, just rendering cheap placeholders
+    // avoiding rendering anything expensive while a user scrolls down
+    if (scrolledOutOfRange && this.props.rowScrollTimeout > 0) {
+      let scrollTO = this.state.scrollingTimeout;
+      if (scrollTO) {
+        clearTimeout(scrollTO);
+      }
+     // queue up, and set state to clear the TO so we render the rows (not placeholders)
+      scrollTO = setTimeout(() => {
+        if (this.state.scrollingTimeout !== null) {
+          this.setState({scrollingTimeout: null});
+        }
+      }, this.props.rowScrollTimeout);
+
+      this.setState({scrollingTimeout: scrollTO});
+    }
+  },
+  
+  componentDidMount: function() {
+	  //var _self = this;
+	  //$(this.refs.Canvas).mCustomScrollbar({scrollInertia:0,axis:'yx',theme: 'minimal-dark',callbacks:{
+	  //  whileScrolling: function(){ _self.onScrollMcs(this);}
+	  //}});
+  },
+  componentDidUpdate: function() {
+	  //$(this.refs.Canvas).mCustomScrollbar("update");
+  },
   render(): ?ReactElement {
     let displayStart = this.state.displayStart;
     let displayEnd = this.state.displayEnd;
     let rowHeight = this.props.rowHeight;
     let length = this.props.rowsCount;
-
+    let rowKey = this.props.rowKey
     let rows = this.getRows(displayStart, displayEnd)
         .map((row, idx) => this.renderRow({
-          key: displayStart + idx,
+          key: "row-" + row[rowKey],
+          rowKey: rowKey,
           ref: idx,
           idx: displayStart + idx,
           row: row,
@@ -283,6 +324,7 @@ const Canvas = React.createClass({
       <div
         style={style}
         onScroll={this.onScroll}
+      	ref="Canvas"
         className={joinClasses('react-grid-Canvas', this.props.className, {opaque: this.props.cellMetaData.selected && this.props.cellMetaData.selected.active})}>
         <RowsContainer
           width={this.props.width}

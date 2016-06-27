@@ -21,7 +21,7 @@ const Cell = React.createClass({
     tabIndex: React.PropTypes.number,
     ref: React.PropTypes.string,
     column: React.PropTypes.shape(ExcelColumn).isRequired,
-    value: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number, React.PropTypes.object, React.PropTypes.bool]).isRequired,
+    value: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number, React.PropTypes.object, React.PropTypes.bool]),
     isExpanded: React.PropTypes.bool,
     isRowSelected: React.PropTypes.bool,
     cellMetaData: React.PropTypes.shape(CellMetaDataShape).isRequired,
@@ -130,7 +130,7 @@ const Cell = React.createClass({
       return <EditorContainer rowData={this.getRowData()} rowIdx={this.props.rowIdx} idx={this.props.idx} cellMetaData={this.props.cellMetaData} column={col} height={this.props.height}/>;
     }
 
-    return this.props.column.formatter;
+    return this.props.column.formatter || this.props.column.render;
   },
 
   getRowData() {
@@ -387,14 +387,15 @@ const Cell = React.createClass({
 
   renderCellContent(props: any): ReactElement {
     let CellContent;
+    let {value,rowData,rowIdx} = this.props;
     let Formatter = this.getFormatter();
     if (React.isValidElement(Formatter)) {
       props.dependentValues = this.getFormatterDependencies();
       CellContent = React.cloneElement(Formatter, props);
     } else if (isFunction(Formatter)) {
-      CellContent = <Formatter value={this.props.value} dependentValues={this.getFormatterDependencies()}/>;
+      CellContent = Formatter.call(this,value, rowData, rowIdx);
     } else {
-      CellContent = <SimpleCellFormatter value={this.props.value}/>;
+      CellContent = <SimpleCellFormatter value={value}/>;
     }
     return (<div ref="cell"
       className="react-grid-Cell__value">{CellContent} {this.props.cellControls}</div>);

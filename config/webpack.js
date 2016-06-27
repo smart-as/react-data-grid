@@ -8,8 +8,8 @@ var RELEASE = argv.release;
 
 var config = {
   entry: {
-    'react-data-grid' : './src/index',
-    'react-data-grid-with-addons' : './src/addons/index'
+    'i-grid' : './src/index',
+    'i-grid-with-addons' : './src/addons/index'
   },
   output: {
     path: path.join(__dirname, "../dist"),
@@ -24,6 +24,12 @@ var config = {
       commonjs2 : 'react',
       amd : 'react'
     },
+    "antd": {
+        root : 'antd',
+        commonjs : 'antd',
+        commonjs2 : 'antd',
+        amd : 'antd'
+     },
     "react/addons": {
 			root : 'React',
 			commonjs : 'react',
@@ -49,7 +55,14 @@ var config = {
     test: /\.js$/,
     exclude: /node_modules|testData/,
     loader: 'jshint'
-  }]
+  }],
+  plugins: [
+        new webpack.DefinePlugin({
+          'process.env': {
+            'NODE_ENV': '"production"'
+          }
+        })
+      ]
 }
 
 

@@ -9,15 +9,15 @@ var rename = require('gulp-rename');
 gulp.task("dist", function(callback) {
 
   var onBundle = function(){
-    gulp.src('dist/react-data-grid-with-addons.js')
+    gulp.src('dist/i-grid-with-addons.js')
     .pipe(uglify())
-    .pipe(rename('react-data-grid-with-addons.min.js'))
+    .pipe(rename('i-grid-with-addons.min.js'))
     .pipe(gulp.dest('dist'))
     .on('error', gutil.log)
 
-    gulp.src('dist/react-data-grid.js')
+    gulp.src('dist/i-grid.js')
     .pipe(uglify())
-    .pipe(rename('react-data-grid.min.js'))
+    .pipe(rename('i-grid.min.js'))
     .pipe(gulp.dest('dist'))
     .on('error', gutil.log)
     callback();

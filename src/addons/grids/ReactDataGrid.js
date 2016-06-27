@@ -1,5 +1,6 @@
 const React                 = require('react');
-const ReactDOM = require('react-dom');
+const ReactDOM 				= require('react-dom');
+const antd 					= require('antd');
 const BaseGrid              = require('../../Grid');
 const Row                   = require('../../Row');
 const ExcelColumn           = require('./ExcelColumn');
@@ -9,6 +10,17 @@ const DOMMetrics           = require('../../DOMMetrics');
 const ColumnMetricsMixin      = require('../../ColumnMetricsMixin');
 const RowUtils = require('../../RowUtils');
 const ColumnUtils = require('../../ColumnUtils');
+
+const rownumberColumn = {
+  name: '',
+  key: 'id',
+  width:25,
+  locked:true,
+  className : 'cell-rownumber',
+  render(id,row,index) {
+    return <span>{index + 1}</span>;
+  } 
+};
 
 if (!Object.assign) {
   Object.assign = require('object-assign');
@@ -624,13 +636,18 @@ const ReactDataGrid = React.createClass({
         onCellChange: this.handleRowSelect,
         filterable: false,
         headerRenderer: headerRenderer,
-        width: 60,
+        width: 24,
         locked: true,
         getRowMetaData: (rowData) => rowData
       };
       unshiftedCols = cols.unshift(selectColumn);
       cols = unshiftedCols > 0 ? cols : unshiftedCols;
     }
+    //行编号
+    if (props.rownumbers) {
+    	cols.unshift(rownumberColumn);
+    }
+    ///
     return cols;
   },
 

@@ -49,11 +49,15 @@ const Grid = React.createClass({
   },
 
   getStyle: function(): { overflow: string; outline: number; position: string; minHeight: number } {
+	let height = this.props.rowHeight * (this.props.rowsCount + 1);
+	if(height == 0 || height > this.props.minHeight){
+		height = this.props.minHeight;
+	}
     return {
       overflow: 'hidden',
       outline: 0,
       position: 'relative',
-      minHeight: this.props.minHeight
+      minHeight: this.props.minHeight,
     };
   },
 

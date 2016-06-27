@@ -24,12 +24,13 @@ webpackConfig = {
 		alias: {
 			react: path.resolve('./node_modules/react'),
       'react-dom': path.resolve('./node_modules/react-dom'),
-			'react-data-grid': path.join(__dirname, "/../../dist/react-data-grid"),
-			'react-data-grid-with-addons': path.join(__dirname, "/../../dist/react-data-grid-with-addons"),
+			'i-grid': path.join(__dirname, "/../../dist/i-grid"),
+			'i-grid-with-addons': path.join(__dirname, "/../../dist/i-grid-with-addons"),
 		}
 	},
 	externals: {
 		"react": 'React',
+		"antd": 'antd',
     "react/addons": 'React',
     "react-dom": 'ReactDOM',
 		'faker': 'faker',

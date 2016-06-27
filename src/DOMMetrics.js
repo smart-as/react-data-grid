@@ -97,7 +97,8 @@ let MetricsComputatorMixin = {
     } else {
       window.attachEvent('resize', this.updateMetrics);
     }
-    this.updateMetrics();
+    setTimeout(this.updateMetrics,400)
+    //this.updateMetrics();
   },
 
   componentWillUnmount() {
