@@ -11,7 +11,7 @@ const SortableHeaderCell = React.createClass({
     columnKey: React.PropTypes.string.isRequired,
     column: React.PropTypes.shape({ name: React.PropTypes.node }),
     onSort: React.PropTypes.func.isRequired,
-    sortDirection: React.PropTypes.oneOf(['ASC', 'DESC', 'NONE'])
+    sortDirection: React.PropTypes.oneOf(['ASC', 'DESC','NONE'])
   },
 
   onClick: function() {
@@ -21,42 +21,33 @@ const SortableHeaderCell = React.createClass({
     case null:
     case undefined:
     case DEFINE_SORT.NONE:
+    case DEFINE_SORT.DESC:
       direction = DEFINE_SORT.ASC;
       break;
     case DEFINE_SORT.ASC:
       direction = DEFINE_SORT.DESC;
       break;
-    case DEFINE_SORT.DESC:
-      direction = DEFINE_SORT.NONE;
-      break;
+    //case DEFINE_SORT.DESC:
+    //  direction = DEFINE_SORT.NONE;
+    //  break;
     }
     this.props.onSort(
       this.props.columnKey,
       direction);
   },
 
-  getSortByText: function() {
-    let unicodeKeys = {
-      ASC: '9650',
-      DESC: '9660',
-      NONE: ''
-    };
-    return String.fromCharCode(unicodeKeys[this.props.sortDirection]);
-  },
-
   render: function(): ?ReactElement {
     let className = joinClasses({
-      'react-grid-HeaderCell-sortable': true,
+      'react-grid-HeaderCell-sortable': !this.props.sortDirection,
       'react-grid-HeaderCell-sortable--ascending': this.props.sortDirection === 'ASC',
       'react-grid-HeaderCell-sortable--descending': this.props.sortDirection === 'DESC'
     });
-
     return (
       <div className={className}
         onClick={this.onClick}
         style={{cursor: 'pointer'}}>
         {this.props.column.name}
-        <span className="pull-right">{this.getSortByText()}</span>
+        <span className="pull-right"></span>
       </div>
     );
   }
